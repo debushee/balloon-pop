@@ -4,6 +4,9 @@ In VS Code use the command terminal for this (not Powershell):
 python3 -m venv venv  
 .\venv\Scripts\activate  
 
+On a Mac activate with this:  
+source venv/bin/activate  
+
 python.exe -m pip install --upgrade pip  
 pip3 install pygame  
 pip3 install opencv-python  
