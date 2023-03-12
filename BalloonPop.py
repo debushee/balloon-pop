@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 from cvzone.HandTrackingModule import HandDetector
 import time
+import SendToDb
 
 
 # Initialize
@@ -13,7 +14,7 @@ pygame.init()
 # Create Window/Display
 width, height = 1280, 720
 window = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Balloon Pop")
+pygame.display.set_caption("Cloud Bursting")
 
 # Initialize Clock for FPS
 fps = 30
@@ -25,16 +26,12 @@ clock = pygame.time.Clock()
 # cap.set(4, 720)  # height
 
 # Images
-imgBalloon = pygame.image.load('./Resources/BalloonRed.png').convert_alpha()
+imgBalloon = pygame.image.load('./Resources/cloud-ready.png').convert_alpha()
+# imgBalloon = pygame.image.load('./Resources/BalloonRed.png').convert_alpha()
 rectBalloon = imgBalloon.get_rect()
 rectBalloon.x, rectBalloon.y = 500, 300
 
-# Variables
-speed = 15
-score = 0
-startTime = time.time()
-totalTime = 60
-name = ''
+
 
 # Detector
 # detector = HandDetector(detectionCon=0.8, maxHands=1)
@@ -44,24 +41,21 @@ def resetBalloon():
     rectBalloon.x = random.randint(100, img.shape[1] - 100)
     rectBalloon.y = img.shape[0] + 50
 
-
-#User name loop
-  
-# it will display on screen
-# screen = pygame.display.set_mode([600, 500])
   
 # basic font for user typed
 base_font = pygame.font.Font(None, 32)
 user_text = ''
 
 # create rectangle for Welcome message
-welcome_rect = pygame.Rect(20, 20, 400, 50)
+welcome_rect = pygame.Rect(20, 20, 650, 50)
+# create rectangle for tips message
+tips_rect = pygame.Rect(20, 100, 650, 32)
 # create rectangle for Enter Name
-enter_name_rect = pygame.Rect(20, 100, 200, 32)
+enter_name_rect = pygame.Rect(20, 150, 200, 32)
 # create rectangle for user input
-input_rect = pygame.Rect(230, 100, 140, 32)
+input_rect = pygame.Rect(230, 150, 140, 32)
 # create rectangle for submit button
-submit_rect = pygame.Rect(20, 150, 140, 32)
+submit_rect = pygame.Rect(20, 200, 140, 32)
 
 # color_active stores color(lightskyblue3) which
 # gets active when input box is clicked by user
@@ -104,10 +98,9 @@ while active:
             # formation
             else:
                 user_text += event.unicode
-        if event.type == pygame.K_RETURN:
-            active = False
+
     # it will set background color of screen
-    window.fill((255, 255, 255))
+    window.fill((22, 28, 34))
   
     if active:
         color = color_active
@@ -117,9 +110,10 @@ while active:
     # draw rectangle and argument passed which should
     # be on screen
     pygame.draw.rect(window, color_passive, welcome_rect)
+    pygame.draw.rect(window, color_passive, tips_rect)
     pygame.draw.rect(window, color_passive, enter_name_rect)
     pygame.draw.rect(window, color, input_rect)
-    pygame.draw.rect(window, color_passive, submit_rect)
+    pygame.draw.rect(window, color_passive, submit_rect,0,6)
   
     text_surface = base_font.render(user_text, True, (255, 255, 255))
       
@@ -127,12 +121,14 @@ while active:
     window.blit(text_surface, (input_rect.x+5, input_rect.y+5))
     smallfont = pygame.font.SysFont('Corbel',20)
     bigfont = pygame.font.SysFont('Corbel',40)
-    welcomeText = bigfont.render('Welcome to Balloon Pop!' , True , "white")
+    welcomeText = bigfont.render('Welcome to the Cloud Bursting game!' , True , "white")
+    tipsText = smallfont.render('Burst as many clouds as you can in 60 seconds...using your fingers' , True , "white")
     enterNameText = smallfont.render('Please enter your name:' , True , "white")
-    submitText = smallfont.render('Submit' , True , "white")
-    window.blit(welcomeText , (20 , 20))
-    window.blit(enterNameText , (20 , 100))
-    window.blit(submitText , (20 , 150))
+    submitText = smallfont.render('Play' , True , "white")
+    window.blit(welcomeText , (25 , 25))
+    window.blit(tipsText , (25 , 105))
+    window.blit(enterNameText , (25 , 155))
+    window.blit(submitText , (25 , 205))
       
     # set width of textfield so that text cannot get
     # outside of user's text input
@@ -149,10 +145,12 @@ while active:
 
 # # Main loop
 # start = True
-# #Get user's name
-# font = pygame.font.Font('./Resources/Marcellus-Regular.ttf', 50)
-# textScore = font.render(f'Please enter your name: {score}', True, (50, 50, 255))
-# window.blit(textScore, (450, 200))
+# sentToDb = False
+# # Variables
+# speed = 15
+# score = 0
+# startTime = time.time()
+# totalTime = 60
 # while start:
 #     # Get Events
 #     for event in pygame.event.get():
@@ -170,9 +168,11 @@ while active:
 #         textTime = font.render(f'Time UP', True, (50, 50, 255))
 #         yourName = font.render(f'Niall', True, (50, 50, 255))
 #         window.blit(textScore, (450, 350))
-#         window.blit(textTime, (530, 275))
+#         window.blit(textTime, (450, 275))
 #         window.blit(yourName, (450, 200))
-
+#         if sentToDb == False:
+#             SendToDb.SendToDb(user_text, score)
+#             sentToDb = True
 #     else:
 #         # OpenCV
 #         success, img = cap.read()
@@ -211,5 +211,5 @@ while active:
 #     # Set FPS
 #     clock.tick(fps)
 
-print(user_text)
+# print(user_text)
 # print(textScore)
